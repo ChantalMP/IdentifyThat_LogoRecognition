@@ -2,140 +2,7 @@ import sklearn
 import os
 import cv2
 from PIL import Image
-
-logos = []
-nologos = []
-
-logodir = []
-
-#ARD
-ardlogodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/logo_ard'
-ardnologodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/noLogo_ard'
-ardMetadata = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/metadata_ard.txt'
-
-#BRHD
-brhdlogodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/logo_brHd'
-brhdnologodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/noLogo_brHd'
-brhdMetadata = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/metadata_brHd.txt'
-
-#pro7
-pro7logodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/logo_pro7'
-pro7nologodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/noLogo_pro7'
-pro7Metadata = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/metadata_pro7.txt'
-
-#sat1
-sat1logodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/logo_sat1'
-sat1nologodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/noLogo_sat1'
-sat1Metadata = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/metadata_sat1.txt'
-
-#swr
-swrlogodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/logo_swr'
-swrnologodir='/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/noLogo_swr'
-swrMetadata = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/metadata_swr.txt'
-
-
-
-def cropImage(imagename, metadataFile):
-    yourImage = Image.open(imagename)
-    # <xMin>,<xMax>,<yMin>,<yMax>
-    file = open(metadataFile , "r")
-    text = file.read()
-    text = text[0:-1]
-
-    data = text.split(",", len(text))
-
-    # img = yourImage.crop(())
-    # xmin ymin xmax ymax
-    xmin = int(data[1])
-    xmax = xmin+int(data[2])
-    ymin = int(data[3])
-    ymax = ymin + int(data[4])
-
-    img = yourImage.crop((xmin,ymin,xmax,ymax))
-    return img
-
-#ARD
-logodir = os.fsencode(ardlogodir)
-for file in os.listdir(logodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        logos.append(cropImage(ardlogodir+"/"+mystr, ardMetadata))
-
-
-nologodir = os.fsencode(ardnologodir)
-for file in os.listdir(nologodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        nologos.append(cropImage(ardnologodir+"/"+mystr , ardMetadata))
-print("ARD FINISHED")
-# brHd
-logodir = os.fsencode(brhdlogodir)
-for file in os.listdir(logodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        logos.append(cropImage(brhdlogodir + "/"+mystr, brhdMetadata))
-
-nologodir = os.fsencode(brhdnologodir)
-for file in os.listdir(nologodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        nologos.append(cropImage(brhdnologodir + "/"+mystr, brhdMetadata))
-print("brhd FINISHED")
-# pro7
-logodir = os.fsencode(pro7logodir)
-for file in os.listdir(logodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        logos.append(cropImage(pro7logodir + "/"+mystr, pro7Metadata))
-
-nologodir = os.fsencode(pro7nologodir)
-for file in os.listdir(nologodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        nologos.append(cropImage(pro7nologodir + "/"+mystr, pro7Metadata))
-print("pro7 FINISHED")
-# sat1
-logodir = os.fsencode(sat1logodir)
-for file in os.listdir(logodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        logos.append(cropImage(sat1logodir + "/"+mystr, sat1Metadata))
-
-nologodir = os.fsencode(sat1nologodir)
-for file in os.listdir(nologodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        nologos.append(cropImage(sat1nologodir + "/"+mystr, sat1Metadata))
-print("sat1 FINISHED")
-# swr
-logodir = os.fsencode(swrlogodir)
-for file in os.listdir(logodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        logos.append(cropImage(swrlogodir + "/"+mystr, swrMetadata))
-
-nologodir = os.fsencode(swrnologodir)
-for file in os.listdir(nologodir):
-    # print (os.path.join(file))
-    mystr = str(os.path.join(file))[2:-1]
-    if mystr.endswith(".jpg"):
-        nologos.append(cropImage(swrnologodir + "/"+mystr, swrMetadata))
-
-print("swr FINISHED")
-
-
-
-
-# import the necessary packages
+import  os.path
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 # from sklearn.cross_validation import train_test_split
@@ -145,6 +12,66 @@ import argparse
 import imutils
 import cv2
 import os
+
+hackDir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/'
+
+withLogos = []
+noLogos = []
+
+
+
+def cropImage(imagename, metadataFile, factor=10):
+    yourImage = Image.open(imagename)
+    w,h = yourImage.size
+    # <xMin>,<xMax>,<yMin>,<yMax>
+    # <xmin>, <ymin> , <xmax> , <yMax>
+    with open(metadataFile , "r") as file:
+
+        text = file.read()
+        text = text[0:-1]
+
+        data = text.split(",", len(text))
+
+        # img = yourImage.crop(())
+        # xmin ymin xmax ymax
+        xmin = 0 if int(data[1]) - factor < 0 else int(data[1]) - factor
+        xmax = w if xmin+int(data[3]) + factor+factor > w else xmin+int(data[3]) + factor+factor
+        ymin = 0 if int(data[2]) - factor < 0 else int(data[2]) - factor
+        ymax = h if ymin + int(data[4]) + factor+factor > h else ymin + int(data[4]) + factor+factor
+        # print(xmin,xmax,ymin,ymax)
+
+        img = yourImage.crop((xmin,ymin,xmax,ymax))
+        img = img.resize((int(w/2),int(h/2)))
+        return img
+
+
+def detectLogo(image):
+    w,h = image.size
+    print(w,h)
+    for y in range(0,102 , step=15):
+        for x in range(0,720 , step= 15):
+
+
+
+
+for subdir in os.listdir(hackDir + 'Images'):
+
+    fileDir = hackDir + 'Images/' + subdir
+    if not os.path.isfile(fileDir + "/metadata.txt"):
+        continue
+
+    metadata = fileDir + "/metadata.txt"
+
+    if os.path.isdir(fileDir):
+        for file in os.listdir(fileDir):
+            if file.endswith(".jpg"):
+                if subdir[0:2] == "no":
+                    noLogos.append(cropImage(fileDir + "/" + file, metadata))
+                else:
+                    withLogos.append(cropImage(fileDir + "/" + file, metadata))
+        print(subdir + ' finished')
+
+
 
 
 def image_to_feature_vector(image, size=(32, 32)):
@@ -172,54 +99,15 @@ def extract_color_histogram(image, bins=(8, 8, 8)):
     # return the flattened histogram as the feature vector
     return hist.flatten()
 
-
-# construct the argument parse and parse the arguments
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-d", "--dataset", required=True,
-# 	help="path to input dataset")
-# ap.add_argument("-k", "--neighbors", type=int, default=1,
-# 	help="# of nearest neighbors for classification")
-# ap.add_argument("-j", "--jobs", type=int, default=-1,
-# 	help="# of jobs for k-NN distance (-1 uses all available cores)")
-# args = vars(ap.parse_args())
-
-
-
 # initialize the raw pixel intensities matrix, the features matrix,
 # and labels list
 rawImages = []
 features = []
 labels = []
 
-# loop over the input images
-# for (i, imagePath) in enumerate(imagePaths):
-#     # load the image and extract the class label (assuming that our
-#     # path as the format: /path/to/dataset/{class}.{image_num}.jpg
-#     image = cv2.imread(imagePath)
-#     label = imagePath.split(os.path.sep)[-1].split(".")[0]
-#
-#     # extract raw pixel intensity "features", followed by a color
-#     # histogram to characterize the color distribution of the pixels
-#     # in the image
-#     pixels = image_to_feature_vector(image)
-#     hist = extract_color_histogram(image)
-#
-#     # update the raw images, features, and labels matricies,
-#     # respectively
-#     rawImages.append(pixels)
-#     features.append(hist)
-#     labels.append(label)
-#
-#     # show an update every 1,000 images
-#     if i > 0 and i % 1000 == 0:
-#         print("[INFO] processed {}/{}".format(i, len(imagePaths)))
-
-
-for logo in logos:
-
-    # image = cv2.imread(logo)
+for logo in withLogos:
     image = np.array(logo)
-    label = "withlogos"
+    label = "withlogo"
     pixels = image_to_feature_vector(image)
     hist = extract_color_histogram(image)
 
@@ -227,11 +115,9 @@ for logo in logos:
     features.append(hist)
     labels.append(label)
 
-for nologo in nologos:
-    # image = cv2.imread(nologo)
+for nologo in noLogos:
     image = np.array(nologo)
-
-    label = "nologos"
+    label = "nologo"
     pixels = image_to_feature_vector(image)
     hist = extract_color_histogram(image)
 
@@ -244,25 +130,22 @@ for nologo in nologos:
 rawImages = np.array(rawImages)
 features = np.array(features)
 labels = np.array(labels)
-print("[INFO] pixels matrix: {:.2f}MB".format(
-	rawImages.nbytes / (1024 * 1000.0)))
-print("[INFO] features matrix: {:.2f}MB".format(
-	features.nbytes / (1024 * 1000.0)))
-
-
+# training raw pixel
 (trainRI, testRI, trainRL, testRL) = train_test_split(
     rawImages, labels, test_size=0.25, random_state=42
 )
 
-(trainFeat, testFeat, trainLabels, testLabels) = train_test_split(
-    features, labels, test_size=0.25, random_state=42
-)
-
-nneigbors = 10
+nneigbors = 1
 model = KNeighborsClassifier(n_neighbors=nneigbors,n_jobs=1)
 model.fit(trainRI, trainRL)
 acc = model.score(testRI, testRL)
 print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
+
+# # training histogram
+# (trainFeat, testFeat, trainLabels, testLabels) = train_test_split(
+#     features, labels, test_size=0.25, random_state=42
+# )
+
 
 # print("[INFO] evaluating histogram accuracy...")
 # model2 = KNeighborsClassifier(n_neighbors=nneigbors,n_jobs=1)
@@ -271,7 +154,7 @@ print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
 # print("[INFO] histogram accuracy: {:.2f}%".format(acc * 100))
 
 
-# construct the argument parse and parse the arguments
+# construct the argument parse and parse the arguments over command line
 # ap = argparse.ArgumentParser()
 # ap.add_argument("-img", "--imageToTest", required=True,
 # 	help="path to image to test")
@@ -282,14 +165,22 @@ print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
 
 while(True):
     imageName = input("Give the image: ")
+
     metadataFile = input("Metadata file path: ")
-    imageToPredict = cropImage(imageName + ".jpg" , metadataFile)
+    try:
+        imageToPredict = cropImage(imageName + ".jpg" , metadataFile + ".txt")
+        detectLogo(imageToPredict)
+        # imageToPredict = Image.open(imageName + ".jpg")
+        # w, h = imageToPredict.size
+        # imageToPredict = imageToPredict.resize((int(w / 2), int(h / 2)))
+    except:
+        print("file not found")
+        continue
+
     testImage = np.array(imageToPredict)
     testPixels = image_to_feature_vector(testImage)
     predict1 = model.predict([testPixels])
     print(model.predict_proba([testPixels]))
-    # if predict1 == "withLogo" or predict2 == "withLogo" :
-    #     print("withLogo")
     print(model.predict([testPixels]))
 
 
