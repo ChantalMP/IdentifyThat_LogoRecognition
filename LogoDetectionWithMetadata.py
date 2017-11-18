@@ -15,13 +15,10 @@ import os
 
 hackDir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/'
 
-# initialize the raw pixel intensities matrix, the features matrix,
-# and labels list
-rawImages = []
-features = []
-labels = []
+withLogos = []
+noLogos = []
 
-
+# crops an image according to the metadataFiles
 def cropImage(imagename, metadataFile, factor=10):
     yourImage = Image.open(imagename)
     w,h = yourImage.size
@@ -45,6 +42,25 @@ def cropImage(imagename, metadataFile, factor=10):
         img = yourImage.crop((xmin,ymin,xmax,ymax))
         img = img.resize((int(w/2),int(h/2)))
         return img
+
+# loops through all the data
+for subdir in os.listdir(hackDir + 'Images'):
+
+    fileDir = hackDir + 'Images/' + subdir
+    if not os.path.isfile(fileDir + "/metadata.txt"):
+        continue
+
+    metadata = fileDir + "/metadata.txt"
+
+    if os.path.isdir(fileDir):
+        for file in os.listdir(fileDir):
+            if file.endswith(".jpg"):
+                if subdir[0:2] == "no":
+                    noLogos.append(cropImage(fileDir + "/" + file, metadata))
+                else:
+                    withLogos.append(cropImage(fileDir + "/" + file, metadata))
+        print(subdir + ' finished')
+
 def image_to_feature_vector(image, size=(32, 32)):
 	# resize the image to a fixed size, then flatten the image into
 	# a list of raw pixel intensities
@@ -70,31 +86,31 @@ def extract_color_histogram(image, bins=(8, 8, 8)):
     # return the flattened histogram as the feature vector
     return hist.flatten()
 
-for subdir in os.listdir(hackDir + 'Images'):
+# initialize the raw pixel intensities matrix, the features matrix,
+# and labels list
+rawImages = []
+features = []
+labels = []
 
-    fileDir = hackDir + 'Images/' + subdir
-    if not os.path.isfile(fileDir + "/metadata.txt"):
-        continue
+for logo in withLogos:
+    image = np.array(logo)
+    label = "withlogo"
+    pixels = image_to_feature_vector(image)
+    hist = extract_color_histogram(image)
 
-    metadata = fileDir + "/metadata.txt"
+    rawImages.append(pixels)
+    features.append(hist)
+    labels.append(label)
 
-    if os.path.isdir(fileDir):
-        for file in os.listdir(fileDir):
-            if file.endswith(".jpg"):
-                if subdir[0:2] == "no":
-                    image = np.array(cropImage(fileDir + "/" + file, metadata))
-                    label = "nologo"
-                    pixels = image_to_feature_vector(image)
-                    rawImages.append(pixels)
-                    labels.append(label)
-                else:
-                    image = np.array(cropImage(fileDir + "/" + file, metadata))
-                    label = str(subdir)
-                    pixels = image_to_feature_vector(image)
-                    rawImages.append(pixels)
-                    labels.append(label)
-        print(subdir + ' finished')
+for nologo in noLogos:
+    image = np.array(nologo)
+    label = "nologo"
+    pixels = image_to_feature_vector(image)
+    hist = extract_color_histogram(image)
 
+    rawImages.append(pixels)
+    features.append(hist)
+    labels.append(label)
 
 # show some information on the memory consumed by the raw images
 # matrix and features matrix
@@ -112,10 +128,10 @@ model.fit(trainRI, trainRL)
 acc = model.score(testRI, testRL)
 print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
 
+
 # # training histogram
 # (trainFeat, testFeat, trainLabels, testLabels) = train_test_split(
-#     features, labels, test_size=0.25, random_state=42
-# )
+#     features, labels, test_size=0.25, random_state=42)
 
 
 # print("[INFO] evaluating histogram accuracy...")
@@ -124,16 +140,7 @@ print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
 # acc = model2.score(testFeat, testLabels)
 # print("[INFO] histogram accuracy: {:.2f}%".format(acc * 100))
 
-
-# construct the argument parse and parse the arguments over command line
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-img", "--imageToTest", required=True,
-# 	help="path to image to test")
-# ap.add_argument("-meta", "--metadataFile" , required )
-# args = vars(ap.parse_args())
-
-
-
+# an infinite loop, that allows the user to predict multiple images, after training
 while(True):
     imageName = input("Give the image: ")
 
@@ -150,8 +157,4 @@ while(True):
     testImage = np.array(imageToPredict)
     testPixels = image_to_feature_vector(testImage)
     predict1 = model.predict([testPixels])
-    print(model.predict_proba([testPixels]))
     print(model.predict([testPixels]))
-
-
-

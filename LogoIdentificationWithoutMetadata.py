@@ -2,12 +2,13 @@ import cv2
 import numpy as np
 import os
 
+# requires a name of an image,that is in jpg format.(the image must be at the main folder of this project, else, picturedir can be changed to match the folder.
 def findAndIdentify(imageName):
 
-    hackDirTemplate = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/templates'
-    hackdir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum'
+    templatesDir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/templates'
+    pictureDir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum'
     try:
-        imgToSearch = cv2.imread(hackdir + '/' + imageName + '.jpg')
+        imgToSearch = cv2.imread(pictureDir + '/' + imageName + '.jpg')
     except:
         print("no images found")
         return
@@ -16,10 +17,10 @@ def findAndIdentify(imageName):
 
     locs = []
 
-    for file in os.listdir(hackDirTemplate):
+    for file in os.listdir(templatesDir):
         if not file.endswith(".jpg"):
             continue
-        template = cv2.imread(hackDirTemplate + "/"+ file, 0)
+        template = cv2.imread(templatesDir + "/"+ file, 0)
 
         res = cv2.matchTemplate(img_grey, template, cv2.TM_CCOEFF_NORMED)
         threshold = 0.75
