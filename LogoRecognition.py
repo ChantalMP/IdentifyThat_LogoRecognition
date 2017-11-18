@@ -15,9 +15,11 @@ import os
 
 hackDir = '/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/'
 
-withLogos = []
-noLogos = []
-
+# initialize the raw pixel intensities matrix, the features matrix,
+# and labels list
+rawImages = []
+features = []
+labels = []
 
 
 def cropImage(imagename, metadataFile, factor=10):
@@ -43,37 +45,6 @@ def cropImage(imagename, metadataFile, factor=10):
         img = yourImage.crop((xmin,ymin,xmax,ymax))
         img = img.resize((int(w/2),int(h/2)))
         return img
-
-
-def detectLogo(image):
-    w,h = image.size
-    print(w,h)
-    for y in range(0,102 , step=15):
-        for x in range(0,720 , step= 15):
-
-
-
-
-for subdir in os.listdir(hackDir + 'Images'):
-
-    fileDir = hackDir + 'Images/' + subdir
-    if not os.path.isfile(fileDir + "/metadata.txt"):
-        continue
-
-    metadata = fileDir + "/metadata.txt"
-
-    if os.path.isdir(fileDir):
-        for file in os.listdir(fileDir):
-            if file.endswith(".jpg"):
-                if subdir[0:2] == "no":
-                    noLogos.append(cropImage(fileDir + "/" + file, metadata))
-                else:
-                    withLogos.append(cropImage(fileDir + "/" + file, metadata))
-        print(subdir + ' finished')
-
-
-
-
 def image_to_feature_vector(image, size=(32, 32)):
 	# resize the image to a fixed size, then flatten the image into
 	# a list of raw pixel intensities
@@ -99,31 +70,31 @@ def extract_color_histogram(image, bins=(8, 8, 8)):
     # return the flattened histogram as the feature vector
     return hist.flatten()
 
-# initialize the raw pixel intensities matrix, the features matrix,
-# and labels list
-rawImages = []
-features = []
-labels = []
+for subdir in os.listdir(hackDir + 'Images'):
 
-for logo in withLogos:
-    image = np.array(logo)
-    label = "withlogo"
-    pixels = image_to_feature_vector(image)
-    hist = extract_color_histogram(image)
+    fileDir = hackDir + 'Images/' + subdir
+    if not os.path.isfile(fileDir + "/metadata.txt"):
+        continue
 
-    rawImages.append(pixels)
-    features.append(hist)
-    labels.append(label)
+    metadata = fileDir + "/metadata.txt"
 
-for nologo in noLogos:
-    image = np.array(nologo)
-    label = "nologo"
-    pixels = image_to_feature_vector(image)
-    hist = extract_color_histogram(image)
+    if os.path.isdir(fileDir):
+        for file in os.listdir(fileDir):
+            if file.endswith(".jpg"):
+                if subdir[0:2] == "no":
+                    image = np.array(cropImage(fileDir + "/" + file, metadata))
+                    label = "nologo"
+                    pixels = image_to_feature_vector(image)
+                    rawImages.append(pixels)
+                    labels.append(label)
+                else:
+                    image = np.array(cropImage(fileDir + "/" + file, metadata))
+                    label = str(subdir)
+                    pixels = image_to_feature_vector(image)
+                    rawImages.append(pixels)
+                    labels.append(label)
+        print(subdir + ' finished')
 
-    rawImages.append(pixels)
-    features.append(hist)
-    labels.append(label)
 
 # show some information on the memory consumed by the raw images
 # matrix and features matrix
@@ -169,7 +140,6 @@ while(True):
     metadataFile = input("Metadata file path: ")
     try:
         imageToPredict = cropImage(imageName + ".jpg" , metadataFile + ".txt")
-        detectLogo(imageToPredict)
         # imageToPredict = Image.open(imageName + ".jpg")
         # w, h = imageToPredict.size
         # imageToPredict = imageToPredict.resize((int(w / 2), int(h / 2)))
