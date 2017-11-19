@@ -13,8 +13,8 @@ import cv2
 
 global root
 root = Tk()
-root.title("First GUi")
-root.geometry("800x400+200+200")
+root.title("IdentifyThat")
+root.geometry("1200x600+200+200")
 #root.configure(bg = "white")
 
 global photoImg
@@ -61,8 +61,8 @@ button = tk.Button(root, text= "Browse", bg="white")
 button.place(relx = .93 , rely = .9 , anchor = "c")
 button.config(command = callback, width = 5, height = 2)
 
-height = 385
-width = 675
+height = int(385*1.5)
+width = int(675*1.5)
 
 frame = ttk.Frame(root)
 
