@@ -47,7 +47,10 @@ def callback():
     global labelText
     filename =  askopenfilename()
     img, name, prob = fun.findAndIdentify(filename)
-    toPrint = '{:.3}'.format((prob*100))
+    toPrint = ""
+    if prob is not "":
+        toPrint = '{:04.2f}'.format((prob * 100))
+
     cv2.imwrite("tempImage.jpg", img)
     img = Image.open("tempImage.jpg")
     showImage(img)

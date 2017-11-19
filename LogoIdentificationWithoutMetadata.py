@@ -19,7 +19,7 @@ def findAndIdentify(imageName):
     locs = []
 
     for file in os.listdir(templatesDir):
-        if not file.endswith(".jpg"):
+        if not (file.endswith(".jpg") or  file.endswith(".png")):
             continue
         template = cv2.imread(templatesDir + "/"+ file, 0)
 
