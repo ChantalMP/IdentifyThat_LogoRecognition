@@ -46,17 +46,18 @@ def findAndIdentify(imageName):
         index = probs.index(max(probs))
         w,h = locs[index][1]
         for pt in zip(*locs[index][0][::-1]):
-            cv2.rectangle(imgToSearch, pt, (pt[0] + w, pt[1] + h), (0, 255, 255), 2)
+            cv2.rectangle(imgToSearch, pt, (pt[0] + w, pt[1] + h), (50, 50, 255), 2)
         # print gewinner
-        print(locs[index][2])
+        # print(locs[index][2])
         # cv2.imshow('detected', imgToSearch)
-        return (imgToSearch, locs[index][2])
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
-    else:
-        return (imgToSearch , "No Logo")
-        print("no logo")
+        return (imgToSearch, locs[index][2], max(probs))
 
+    else:
+        return (imgToSearch , "No Logo", "")
+
+#This loop can be used instead of the gui
 # while(True):
 #     imageName = input("Give the image: ")
 #     findAndIdentify(imageName)

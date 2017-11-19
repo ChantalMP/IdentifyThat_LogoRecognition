@@ -5,6 +5,8 @@ import subprocess
 from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
+from tkinter.font import Font
+
 import LogoIdentificationWithoutMetadata as fun
 from PIL import Image, ImageTk
 import cv2
@@ -16,15 +18,15 @@ root.geometry("800x400+200+200")
 #root.configure(bg = "white")
 
 global photoImg
-global panelImg
-global panelText
+global labelImg
+global labelText
 
 defaultPhoto = "/media/psf/Google Drive/Python Projects/RohdeSchwarzHackatum/default.jpg"
 
 
 def showImage(img):
     global photoImg
-    global panelImg
+    global labelImg
     w, h = img.size
     myRatio = w / h
 
@@ -36,22 +38,23 @@ def showImage(img):
         img = img.resize((width, (int(width * (myRatio)))), Image.ANTIALIAS)
 
     photoImg = ImageTk.PhotoImage(img)
-    panelImg.img = photoImg
-    panelImg.config(image=photoImg)
-    panelImg.place(relx = 0.05, rely = 0.05, width=width, height=height)
+    labelImg.img = photoImg
+    labelImg.config(image=photoImg)
+    labelImg.place(relx = 0.004, rely = 0.001, width=width, height=height)
 
 
 def callback():
-    global panelText
+    global labelText
     filename =  askopenfilename()
-    img, name = fun.findAndIdentify(filename)
+    img, name, prob = fun.findAndIdentify(filename)
+    toPrint = '{:.3}'.format((prob*100))
     cv2.imwrite("tempImage.jpg", img)
     img = Image.open("tempImage.jpg")
     showImage(img)
 
-
-    panelText.config(text = name)
-    panelText.place(relx=0.93, rely=0.5, anchor="c")
+    out = name + "\n" + toPrint if prob == "" else name + "\n" + toPrint+"%"
+    labelText.config(text = out, font=("Helvetica", 14))
+    labelText.place(relx=0.93, rely=0.5, anchor="c")
 
 
 button = tk.Button(root, text= "Browse", bg="white")
@@ -65,8 +68,8 @@ frame = ttk.Frame(root)
 
 frame.place(relx = 0.01, rely=0.02, width=width, height = height)
 # button.invoke()
-panelImg = tk.Label(frame)
-panelText = tk.Label(root)
+labelImg = tk.Label(frame)
+labelText = tk.Label(root)
 
 img = Image.open(defaultPhoto)
 showImage(img)
